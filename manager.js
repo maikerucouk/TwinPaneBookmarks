@@ -108,6 +108,17 @@ function clearPaneSelection(pane) {
   pane.selectionAnchorId = null;
 }
 
+function navigatePaneToFolder(paneId, folderId) {
+  const pane = panes[paneId];
+  setActivePane(paneId);
+  pane.currentId = folderId;
+  clearPaneSelection(pane);
+  previewNodeId = null;
+  renderPreview();
+  renderPane(paneId);
+  syncControls();
+}
+
 function destinationPaneId() {
   return activePaneId === "left" ? "right" : "left";
 }
@@ -178,13 +189,7 @@ function renderBreadcrumbs(paneId) {
     button.textContent = node.id === rootId ? "All bookmarks" : (node.title || "Untitled folder");
     button.disabled = index === path.length - 1;
     button.addEventListener("click", () => {
-      setActivePane(paneId);
-      pane.currentId = node.id;
-      clearPaneSelection(pane);
-      previewNodeId = null;
-      renderPreview();
-      renderPane(paneId);
-      syncControls();
+      navigatePaneToFolder(paneId, node.id);
     });
     nav.append(button);
   });
@@ -202,13 +207,7 @@ function renderPane(paneId) {
   upButton.disabled = pane.currentId === rootId || parentId === undefined;
   upButton.onclick = () => {
     if (parentId !== undefined) {
-      setActivePane(paneId);
-      pane.currentId = parentId;
-      clearPaneSelection(pane);
-      previewNodeId = null;
-      renderPreview();
-      renderPane(paneId);
-      syncControls();
+      navigatePaneToFolder(paneId, parentId);
     }
   };
 
@@ -315,16 +314,9 @@ function selectBookmarkRange(paneId, node, initialAnchorId = null) {
 }
 
 function navigateToParent(paneId) {
-  const pane = panes[paneId];
-  const parentId = parentById.get(pane.currentId);
+  const parentId = parentById.get(panes[paneId].currentId);
   if (parentId === undefined) return;
-  setActivePane(paneId);
-  pane.currentId = parentId;
-  clearPaneSelection(pane);
-  previewNodeId = null;
-  renderPreview();
-  renderPane(paneId);
-  syncControls();
+  navigatePaneToFolder(paneId, parentId);
   paneElements[paneId].focus();
 }
 
@@ -332,12 +324,7 @@ function activateNode(paneId, node) {
   if (node.url) {
     chrome.tabs.create({ url: node.url });
   } else {
-    panes[paneId].currentId = node.id;
-    clearPaneSelection(panes[paneId]);
-    previewNodeId = null;
-    renderPreview();
-    renderPane(paneId);
-    syncControls();
+    navigatePaneToFolder(paneId, node.id);
   }
 }
 
@@ -808,7 +795,7 @@ document.addEventListener("keydown", (event) => {
   const isEditing = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || target.isContentEditable;
   if (dialog.open || isEditing) return;
 
-  if (event.key === "Tab" && !isEditing && !dialog.open) {
+  if (event.key === "Tab") {
     event.preventDefault();
     setActivePane(destinationPaneId(), true);
     return;
