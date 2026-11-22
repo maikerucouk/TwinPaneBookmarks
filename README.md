@@ -2,6 +2,8 @@
 
 A Chrome Manifest V3 extension for managing bookmarks with independent source and destination panes.
 
+![Twin Pane Bookmarks](https://github.com/maikerucouk/TwinPaneBookmarks/blob/main/screenshots/twin-pane-bookmarks.png)
+
 ## Install in Chrome
 
 1. Open `chrome://extensions`.
