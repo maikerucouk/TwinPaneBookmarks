@@ -51,8 +51,8 @@ button { color: inherit; }
 
 .wordmark em { color: var(--blue); font-weight: 400; }
 .mark { width: 27px; height: 24px; display: flex; gap: 3px; align-items: stretch; }
-.mark i { flex: 1; border: 2px solid var(--blue); border-radius: 2px; background: #173a5d; }
-.mark i + i { border-color: var(--green); background: #193b29; }
+.mark i { flex: 1; border: 2px solid var(--green); border-radius: 2px; background: #193b29; }
+.mark i + i { border-color: var(--muted); background: #343439; }
 
 .contact-credit { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; color: #a0a0a8; font-size: 13px; }
 .contact-link { color: #f0f0f2; font-weight: 700; text-decoration: none; }
