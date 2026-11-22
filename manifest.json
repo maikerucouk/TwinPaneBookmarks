@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Twin Pane Bookmarks",
+  "version": "1.0.0",
+  "description": "Manage Chrome bookmarks with a source and destination pane.",
+  "permissions": ["bookmarks"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Open Twin Pane Bookmarks"
+  }
+}

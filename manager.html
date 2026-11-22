@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Twin Pane Bookmarks</title>
+    <link rel="stylesheet" href="manager.css">
+    <script src="manager.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="wordmark" href="#" aria-label="Twin Pane Bookmarks home">
+        <span class="mark" aria-hidden="true"><i></i><i></i></span>
+        <span>Twin Pane <em>Bookmarks</em></span>
+      </a>
+      <div class="contact-credit"><span>by&nbsp;</span><a class="contact-link" href="mailto:maikeru@maikeru.co.uk">maikeru</a></div>
+      <div class="topbar-tools">
+        <div class="topbar-note"><span class="live-dot"></span><span id="status-message" role="status">Loading bookmarks...</span></div>
+        <div class="keyboard-hint"><kbd>Tab</kbd><span>switch source pane</span></div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="actionbar" aria-label="Bookmark actions">
+        <div class="direction-labels">
+          <span class="source-label">Source</span>
+          <span class="direction-line" aria-hidden="true"></span>
+          <span class="destination-label">Destination</span>
+        </div>
+        <div class="actions">
+          <button class="action-button primary" data-action="copy" disabled>Copy to destination</button>
+          <button class="action-button" data-action="move" disabled>Move to destination</button>
+          <span class="action-divider" aria-hidden="true"></span>
+          <button class="action-button" data-action="rename" disabled>Rename</button>
+          <button class="action-button" data-action="edit" disabled>Edit</button>
+          <button class="action-button" data-action="duplicate" disabled>Duplicate</button>
+          <button class="action-button danger" data-action="delete" disabled>Delete</button>
+          <span class="action-divider" aria-hidden="true"></span>
+          <button class="action-button" id="sort-source" type="button">Sort A-Z</button>
+          <div class="toolbar-utilities">
+            <button class="action-button" id="import-bookmarks" type="button">Import</button>
+            <button class="action-button" id="export-bookmarks" type="button">Export</button>
+            <input id="import-bookmarks-file" type="file" accept=".html,text/html" hidden>
+          </div>
+        </div>
+      </section>
+
+      <div class="manager-content" id="manager-content">
+        <section class="panes" aria-label="Bookmark panes">
+          <section class="pane active" id="pane-left" data-pane="left" tabindex="0" aria-label="Left bookmark pane">
+            <div class="pane-heading">
+              <div class="pane-heading-title"><span class="pane-role">SOURCE</span><h1>Bookmarks</h1></div>
+              <button class="up-button" data-pane-up="left" type="button" title="Go to parent folder" aria-label="Go to parent folder">Up</button>
+            </div>
+            <nav class="breadcrumbs" id="breadcrumbs-left" aria-label="Left pane location"></nav>
+            <div class="list-heading"><span>Name</span><span>Address</span></div>
+            <div class="bookmark-list" id="list-left" role="listbox" aria-label="Bookmarks in source pane"></div>
+            <footer class="pane-footer" id="footer-left"></footer>
+          </section>
+
+          <div class="pane-divider" aria-hidden="true"><span></span></div>
+
+          <section class="pane" id="pane-right" data-pane="right" tabindex="0" aria-label="Right bookmark pane">
+            <div class="pane-heading">
+              <div class="pane-heading-title"><span class="pane-role">DESTINATION</span><h1>Bookmarks</h1></div>
+              <button class="up-button" data-pane-up="right" type="button" title="Go to parent folder" aria-label="Go to parent folder">Up</button>
+            </div>
+            <nav class="breadcrumbs" id="breadcrumbs-right" aria-label="Right pane location"></nav>
+            <div class="list-heading"><span>Name</span><span>Address</span></div>
+            <div class="bookmark-list" id="list-right" role="listbox" aria-label="Bookmarks in destination pane"></div>
+            <footer class="pane-footer" id="footer-right"></footer>
+          </section>
+        </section>
+
+        <div class="splitter-row">
+          <div class="preview-splitter" id="preview-splitter" role="separator" tabindex="0" aria-label="Resize bookmark and preview panes" aria-orientation="horizontal" aria-valuemin="25" aria-valuemax="75" aria-valuenow="50">
+            <span class="splitter-grip" aria-hidden="true"></span>
+          </div>
+          <button class="preview-toggle" id="preview-toggle" type="button" aria-controls="preview-pane" aria-expanded="true">Hide preview</button>
+        </div>
+
+        <section class="preview-pane" id="preview-pane" aria-label="Bookmark preview">
+          <header class="preview-header">
+            <div class="preview-heading"><span class="pane-role">PREVIEW</span><strong id="preview-title">No bookmark selected</strong></div>
+            <span class="preview-address" id="preview-address"></span>
+            <button class="action-button preview-open" id="preview-open" type="button" hidden>Open in new tab</button>
+          </header>
+          <div class="preview-body">
+            <div class="preview-empty" id="preview-empty">
+              <strong>Select a bookmark to preview it</strong>
+              <span>Some websites prevent embedded previews.</span>
+            </div>
+            <iframe id="preview-frame" title="Selected bookmark preview" referrerpolicy="no-referrer" hidden></iframe>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog id="edit-dialog" class="edit-dialog">
+      <form id="edit-form">
+        <div class="dialog-heading"><span class="pane-role" id="dialog-eyebrow">BOOKMARK</span><h2 id="dialog-title">Edit bookmark</h2></div>
+        <label class="field-label" for="bookmark-title">Name</label>
+        <input id="bookmark-title" name="title" type="text" maxlength="255" required autocomplete="off">
+        <div id="url-field">
+          <label class="field-label" for="bookmark-url">Address</label>
+          <input id="bookmark-url" name="url" type="url" required autocomplete="url">
+        </div>
+        <div class="dialog-actions">
+          <button class="action-button" type="button" id="cancel-edit">Cancel</button>
+          <button class="action-button primary" type="submit">Save changes</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
